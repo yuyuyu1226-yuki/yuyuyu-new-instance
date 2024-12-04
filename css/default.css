@@ -1,13 +1,16 @@
+<link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+
 @font-face {
   font-family: 'Azuki';
   src: url('path/to/azuki.ttf') format('truetype');
 }
 
 html, body {
-  font-family: 'Azuki', BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen,
+  font-family: 'Kosugi Maru', 'Azuki', BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica,
     Arial, sans-serif;
 }
+
 
 
 #contents {
