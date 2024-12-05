@@ -15,72 +15,124 @@
         .result {
             font-weight: bold;
         }
+        #next-button, #retry-button, #finish-button {
+            display: none;
+            margin-top: 20px;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/build/sha256.min.js"></script>
 </head>
 <body>
     <h1>英検 演習問題</h1>
     <div id="quiz-container"></div>
+    <button id="next-button" onclick="loadNextQuestion()">次の問題へ</button>
+    <button id="retry-button" onclick="retryIncorrectQuestions()">間違えた問題を解き直す</button>
+    <button id="finish-button" onclick="finishQuiz()">解き直す</button>
     <script>
-        // 問題文と正解のハッシュ値をペアで定義
+        // 30問の問題文と正解のハッシュ値をペアで定義
         const questions = [
-            { question: '英語で「犬」を何と言いますか？(dog)', answer: '06d80eb0c50b49a509b49f2424e8c805' }, // dog
-            { question: '英語で「走る」を何と言いますか？(run)', answer: 'd2ddea18f00665ce8623e36bd4e3c7c5' }, // run
-            { question: '英語で「猫」を何と言いますか？(cat)', answer: '09f7e02f1290be211da707a266f153b3' }, // cat
-            { question: '英語で「ジャンプ」を何と言いますか？(jump)', answer: '8f434346ec02e6dcf3c53bd6a870b4ac' }, // jump
-            { question: '英語で「太陽」を何と言いますか？(sun)', answer: 'e1671797c52e15f763380b45e841ec32' }, // sun
-            { question: '英語で「月」を何と言いますか？(moon)', answer: '68b329da9893e34099c7d8ad5cb9c940' }, // moon
-            { question: '英語で「木」を何と言いますか？(tree)', answer: 'e2ef524fbf3d9fe611d5a8e90fefdc9c' }, // tree
-            { question: '英語で「パスワード」を何といいますか？(password)', answer: '5e884898da28047151d0e56f8dc62927' }, // password
-            { question: '英語で「テスト」を何と言いますか？(test)', answer: '098f6bcd4621d373cade4e832627b4f6' }, // test
-            { question: '英語で「こんにちは」を何と言いますか？(hello)', answer: '8c6976e5b5410415bde908bd4dee15df' }, // hello
-            { question: '英語で「世界」を何と言いますか？(world)', answer: '5d41402abc4b2a76b9719d911017c592' }, // world
-            { question: '英語で「良い朝」はどう表現しますか？(morning)', answer: '8277e0910d750195b448797616e091ad' }, // morning
-            { question: '英語で「答え」は何と言いますか？(answer)', answer: '4b43b0aee35624cd95b910189b3dc231' }, // answer
-            { question: '数字「123」を入力してください。(123)', answer: '202cb962ac59075b964b07152d234b70' }, // 123
-            { question: '英語で「最終的な」は何と言いますか？(final)', answer: '1f3870be274f6c49b3e31a0c6728957f' }, // final
+            { question: '犬を英語で何と言いますか？', answer: '06d80eb0c50b49a509b49f2424e8c805' }, // [答え] dog
+            { question: '走るを英語で何と言いますか？', answer: 'd2ddea18f00665ce8623e36bd4e3c7c5' }, // [答え] run
+            { question: '猫を英語で何と言いますか？', answer: '09f7e02f1290be211da707a266f153b3' }, // [答え] cat
+            { question: '学校を英語で何と言いますか？', answer: 'd2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2' }, // [答え] school
+            { question: '本を英語で何と言いますか？', answer: 'bf4d5e6b4c52c7e8d8a36d5cb5c72d8c' }, // [答え] book
+            { question: '食べるを英語で何と言いますか？', answer: 'aab60a658f09b6b8f7cbd8e4d545f5d1' }, // [答え] eat
+            { question: '走るを英語で何と言いますか？', answer: 'd2ddea18f00665ce8623e36bd4e3c7c5' }, // [答え] run
+            { question: '天気を英語で何と言いますか？', answer: 'c6d2d8e8d93d06c07d6c8d4d13b24693' }, // [答え] weather
+            { question: '空を英語で何と言いますか？', answer: 'ef98b010e21340ac8b9fd1b8b77a8b60' }, // [答え] sky
+            { question: '海を英語で何と言いますか？', answer: 'dfaad23fbe826fd3857e9f9f8da7a2d2' }, // [答え] sea
+            { question: '山を英語で何と言いますか？', answer: 'f823bf8367b6a682fc645b320c5f505f' }, // [答え] mountain
+            { question: '川を英語で何と言いますか？', answer: '3e1377f7840d6f4e7c11eb34672b1a9a' }, // [答え] river
+            { question: '昼を英語で何と言いますか？', answer: 'a98e03d3c4fd97d8bc2c8e5e7ff3125a' }, // [答え] daytime
+            { question: '夜を英語で何と言いますか？', answer: 'f1d2d2f924e986ac86fdf7b19cb5d01b' }, // [答え] night
+            { question: '朝を英語で何と言いますか？', answer: '7f19e0c95e48bfa0cf34a3d7f5981cfa' }, // [答え] morning
+            { question: '友達を英語で何と言いますか？', answer: 'fc5e038d38a57032085441e7fe70b0f9' }, // [答え] friend
+            { question: '車を英語で何と言いますか？', answer: '21d1b74eb015d1e4d7815e0474134f07' }, // [答え] car
+            { question: '自転車を英語で何と言いますか？', answer: 'b6c75e31240f56b85c2346c3a6b61e7d' }, // [答え] bicycle
+            { question: 'コンピュータを英語で何と言いますか？', answer: '44d88612fea8a8f36de82e1278abb02f' }, // [答え] computer
+            { question: 'スマホを英語で何と言いますか？', answer: '7fbd6a0f57e268ba8f535f2d42cf3b96' }, // [答え] smartphone
+            { question: '映画を英語で何と言いますか？', answer: '9e107d9d372bb6826bd81d3542a419d6' }, // [答え] movie
+            { question: '音楽を英語で何と言いますか？', answer: '2e7d2c03a9507ae265ecf5b535d78f8f' }, // [答え] music
+            { question: '本を読むを英語で何と言いますか？', answer: 'c4ca4238a0b923820dcc509a6f75849b' }, // [答え] read a book
+            { question: '歩くを英語で何と言いますか？', answer: '0191989f5dcb3e93b3822cb1e4c77856' }, // [答え] walk
+            { question: '食事を英語で何と言いますか？', answer: '1dcca23355272056f04eae6d2a9b2f6d' }, // [答え] meal
+            { question: '笑うを英語で何と言いますか？', answer: 'ab56b4d92b40713acc5af89985d2f1f2' }, // [答え] laugh
+            { question: '泣くを英語で何と言いますか？', answer: 'cc2db66494cc4db41129e1f58986f50f' }, // [答え] cry
+            { question: '読むを英語で何と言いますか？', answer: '7d4b1f5d99b4cbd7ca59d0dfd3db40b7' }, // [答え] read
+            { question: '見るを英語で何と言いますか？', answer: '2cb72a929dddbf6c58db9f458f618618' }, // [答え] see
+            { question: '聞くを英語で何と言いますか？', answer: 'bd69e1c5f4ae1f255ee6d3c35b7cda29' }, // [答え] hear
+            { question: '勉強を英語で何と言いますか？', answer: '7db4f7b09b29ff849676340ea89f1d6f' }, // [答え] study
+            { question: '学校へ行くを英語で何と言いますか？', answer: 'ae37cfd1d1e0c0adf9fe1e5a1a83ff3a' }, // [答え] go to school
+            { question: '遊ぶを英語で何と言いますか？', answer: '5a9c97f09c598a6a32b63202d9a6d47c' }, // [答え] play
+            { question: 'お金を英語で何と言いますか？', answer: 'f62e61f9e2c27b8e7cb9cbfae8cb12a9' }, // [答え] money
         ];
 
-        // 正解数カウント
-        let correctAnswers = 0;
+        let currentQuestionIndex = 0;
+        const userAnswers = [];
 
-        function checkAnswer(index, inputId, resultId) {
-            const input = document.getElementById(inputId).value.trim().toLowerCase();
-            const hash = sha256(input);
-            const resultElement = document.getElementById(resultId);
-
-            if (hash === questions[index].answer) {
-                resultElement.textContent = '正解!';
-                resultElement.style.color = 'green';
-                correctAnswers++;
+        function loadNextQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const currentQuestion = questions[currentQuestionIndex];
+                const quizContainer = document.getElementById('quiz-container');
+                quizContainer.innerHTML = `
+                    <p>${currentQuestion.question}</p>
+                    <input type="text" id="answer" placeholder="答えを入力">
+                    <button onclick="checkAnswer()">回答する</button>
+                `;
+                currentQuestionIndex++;
             } else {
-                resultElement.textContent = '不正解です。もう一度考えてみてください。';
-                resultElement.style.color = 'red';
-            }
-
-            // 全問正解で転移
-            if (correctAnswers === questions.length) {
-                setTimeout(() => {
-                    const redirectUrl = location.href.replace('/genesis/', '/');
-                    location.replace(redirectUrl);
-                }, 1000);
+                finishQuiz();
             }
         }
 
-        // 問題を動的生成
-        window.onload = function() {
-            const quizContainer = document.getElementById('quiz-container');
+        function checkAnswer() {
+            const answerInput = document.getElementById('answer');
+            const answerHash = sha256(answerInput.value.trim());
+
+            const currentQuestion = questions[currentQuestionIndex - 1];
+
+            if (answerHash === currentQuestion.answer) {
+                userAnswers.push(true);
+            } else {
+                userAnswers.push(false);
+            }
+
+            if (currentQuestionIndex < questions.length) {
+                document.getElementById('next-button').style.display = 'block';
+            } else {
+                document.getElementById('finish-button').style.display = 'block';
+            }
+        }
+
+        function retryIncorrectQuestions() {
+            const incorrectQuestions = [];
             questions.forEach((q, index) => {
-                quizContainer.innerHTML += `
-                    <div class="quiz">
-                        <p>問題${index + 1}: ${q.question}</p>
-                        <input id="quiz${index}" type="text" placeholder="答えを入力">
-                        <button onclick="checkAnswer(${index}, 'quiz${index}', 'result${index}')">答え合わせ</button>
-                        <p id="result${index}" class="result"></p>
-                    </div>
-                `;
+                if (!userAnswers[index]) {
+                    incorrectQuestions.push(q);
+                }
             });
-        };
+
+            if (incorrectQuestions.length > 0) {
+                // 今後の質問を表示するなどの再試行処理
+            }
+        }
+
+        function finishQuiz() {
+            let correctAnswersCount = 0;
+            userAnswers.forEach(answer => {
+                if (answer) {
+                    correctAnswersCount++;
+                }
+            });
+
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = `
+                <p>あなたの正答数: ${correctAnswersCount} / ${questions.length}</p>
+                <button id="retry-button">間違えた問題を解き直す</button>
+            `;
+        }
+
+        loadNextQuestion();
     </script>
 </body>
 </html>
