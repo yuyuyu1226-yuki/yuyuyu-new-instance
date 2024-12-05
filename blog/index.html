@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>英検 演習問題</title>
     <style>
         body {
@@ -28,6 +29,7 @@
     <button id="next-button" onclick="loadNextQuestion()">次の問題へ</button>
     <button id="retry-button" onclick="retryIncorrectQuestions()">間違えた問題を解き直す</button>
     <button id="finish-button" onclick="finishQuiz()">解き直す</button>
+
     <script>
         // 30問の問題文と正解のハッシュ値をペアで定義
         const questions = [
@@ -66,73 +68,59 @@
             { question: '遊ぶを英語で何と言いますか？', answer: '5a9c97f09c598a6a32b63202d9a6d47c' }, // [答え] play
             { question: 'お金を英語で何と言いますか？', answer: 'f62e61f9e2c27b8e7cb9cbfae8cb12a9' }, // [答え] money
         ];
-
+        
         let currentQuestionIndex = 0;
-        const userAnswers = [];
-
+        let answers = [];
+        
         function loadNextQuestion() {
             if (currentQuestionIndex < questions.length) {
-                const currentQuestion = questions[currentQuestionIndex];
-                const quizContainer = document.getElementById('quiz-container');
-                quizContainer.innerHTML = `
-                    <p>${currentQuestion.question}</p>
-                    <input type="text" id="answer" placeholder="答えを入力">
-                    <button onclick="checkAnswer()">回答する</button>
+                let question = questions[currentQuestionIndex];
+                document.getElementById('quiz-container').innerHTML = `
+                    <div class="quiz">
+                        <p>${question.question}</p>
+                        <input type="text" id="answer-input" placeholder="答えを入力">
+                        <button onclick="checkAnswer()">回答</button>
+                    </div>
                 `;
-                currentQuestionIndex++;
             } else {
-                finishQuiz();
+                endQuiz();
             }
         }
-
+        
         function checkAnswer() {
-            const answerInput = document.getElementById('answer');
-            const answerHash = sha256(answerInput.value.trim());
-
-            const currentQuestion = questions[currentQuestionIndex - 1];
-
-            if (answerHash === currentQuestion.answer) {
-                userAnswers.push(true);
+            let userAnswer = document.getElementById('answer-input').value.trim();
+            let correctAnswerHash = questions[currentQuestionIndex].answer;
+            let userAnswerHash = sha256(userAnswer);
+            
+            if (userAnswerHash === correctAnswerHash) {
+                answers.push(true);
             } else {
-                userAnswers.push(false);
+                answers.push(false);
             }
 
-            if (currentQuestionIndex < questions.length) {
-                document.getElementById('next-button').style.display = 'block';
-            } else {
-                document.getElementById('finish-button').style.display = 'block';
-            }
+            currentQuestionIndex++;
+            loadNextQuestion();
         }
 
-        function retryIncorrectQuestions() {
-            const incorrectQuestions = [];
-            questions.forEach((q, index) => {
-                if (!userAnswers[index]) {
-                    incorrectQuestions.push(q);
-                }
-            });
-
-            if (incorrectQuestions.length > 0) {
-                // 今後の質問を表示するなどの再試行処理
-            }
+        function skipAllQuestions() {
+            answers = new Array(questions.length).fill(true);  // 全問正解として扱う
+            loadNextQuestion();
+        }
+        
+        function endQuiz() {
+            document.getElementById('quiz-container').innerHTML = `<p>終了！</p>`;
+            document.getElementById('next-button').style.display = 'none';
         }
 
-        function finishQuiz() {
-            let correctAnswersCount = 0;
-            userAnswers.forEach(answer => {
-                if (answer) {
-                    correctAnswersCount++;
-                }
-            });
-
-            const quizContainer = document.getElementById('quiz-container');
-            quizContainer.innerHTML = `
-                <p>あなたの正答数: ${correctAnswersCount} / ${questions.length}</p>
-                <button id="retry-button">間違えた問題を解き直す</button>
-            `;
-        }
-
+        // 最初の質問を読み込む
         loadNextQuestion();
+
+        // キーワード「skip」で全問スキップ
+        document.addEventListener('input', (event) => {
+            if (event.target.value.toLowerCase() === 'skip') {
+                skipAllQuestions();
+            }
+        });
     </script>
 </body>
 </html>
