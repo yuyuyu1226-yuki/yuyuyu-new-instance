@@ -1,62 +1,86 @@
-<script>
-    // 問題文と正解のハッシュ値をペアで定義
-    const questions = [
-        { question: '犬を英語で何と言いますか？', answer: '06d80eb0c50b49a509b49f2424e8c805' }, // dog
-        { question: '走るを英語で何と言いますか？', answer: 'd2ddea18f00665ce8623e36bd4e3c7c5' }, // run
-        { question: '猫を英語で何と言いますか？', answer: '09f7e02f1290be211da707a266f153b3' }, // cat
-        { question: 'ジャンプを英語で何と言いますか？', answer: '8f434346ec02e6dcf3c53bd6a870b4ac' }, // jump
-        { question: '太陽を英語で何と言いますか？', answer: 'e1671797c52e15f763380b45e841ec32' }, // sun
-        { question: '月を英語で何と言いますか？', answer: '68b329da9893e34099c7d8ad5cb9c940' }, // moon
-        { question: '木を英語で何と言いますか？', answer: 'e2ef524fbf3d9fe611d5a8e90fefdc9c' }, // tree
-        { question: '「パスワード」を英語で入力してください。', answer: '5e884898da28047151d0e56f8dc62927' }, // password
-        { question: 'テストを英語で何と言いますか？', answer: '098f6bcd4621d373cade4e832627b4f6' }, // test
-        { question: '挨拶の「こんにちは」を英語で何と言いますか？', answer: '8c6976e5b5410415bde908bd4dee15df' }, // hello
-        { question: '「世界」を英語で何と言いますか？', answer: '5d41402abc4b2a76b9719d911017c592' }, // world
-        { question: '英語で「良い朝」はどう表現しますか？', answer: '8277e0910d750195b448797616e091ad' }, // morning
-        { question: '英語で「答え」は何と言いますか？', answer: '4b43b0aee35624cd95b910189b3dc231' }, // answer
-        { question: '数字「123」を入力してください。', answer: '202cb962ac59075b964b07152d234b70' }, // 123
-        { question: '英語で「最終的な」は何と言いますか？', answer: '1f3870be274f6c49b3e31a0c6728957f' } // final
-        { question: '英語で「お父さん」は何といいますか？', answer: '88a1881f0025cf7117501d07aefc5d4be6696656790d765678df8bc48ca52687'
-    ];
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>英検 演習問題</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .quiz {
+            margin-bottom: 20px;
+        }
+        .result {
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/build/sha256.min.js"></script>
+</head>
+<body>
+    <h1>英検 演習問題</h1>
+    <div id="quiz-container"></div>
+    <script>
+        // 問題文と正解のハッシュ値をペアで定義
+        const questions = [
+            { question: '英語で「犬」を何と言いますか？(dog)', answer: '06d80eb0c50b49a509b49f2424e8c805' }, // dog
+            { question: '英語で「走る」を何と言いますか？(run)', answer: 'd2ddea18f00665ce8623e36bd4e3c7c5' }, // run
+            { question: '英語で「猫」を何と言いますか？(cat)', answer: '09f7e02f1290be211da707a266f153b3' }, // cat
+            { question: '英語で「ジャンプ」を何と言いますか？(jump)', answer: '8f434346ec02e6dcf3c53bd6a870b4ac' }, // jump
+            { question: '英語で「太陽」を何と言いますか？(sun)', answer: 'e1671797c52e15f763380b45e841ec32' }, // sun
+            { question: '英語で「月」を何と言いますか？(moon)', answer: '68b329da9893e34099c7d8ad5cb9c940' }, // moon
+            { question: '英語で「木」を何と言いますか？(tree)', answer: 'e2ef524fbf3d9fe611d5a8e90fefdc9c' }, // tree
+            { question: '英語で「パスワード」を何といいますか？(password)', answer: '5e884898da28047151d0e56f8dc62927' }, // password
+            { question: '英語で「テスト」を何と言いますか？(test)', answer: '098f6bcd4621d373cade4e832627b4f6' }, // test
+            { question: '英語で「こんにちは」を何と言いますか？(hello)', answer: '8c6976e5b5410415bde908bd4dee15df' }, // hello
+            { question: '英語で「世界」を何と言いますか？(world)', answer: '5d41402abc4b2a76b9719d911017c592' }, // world
+            { question: '英語で「良い朝」はどう表現しますか？(morning)', answer: '8277e0910d750195b448797616e091ad' }, // morning
+            { question: '英語で「答え」は何と言いますか？(answer)', answer: '4b43b0aee35624cd95b910189b3dc231' }, // answer
+            { question: '数字「123」を入力してください。(123)', answer: '202cb962ac59075b964b07152d234b70' }, // 123
+            { question: '英語で「最終的な」は何と言いますか？(final)', answer: '1f3870be274f6c49b3e31a0c6728957f' }, // final
+        ];
 
-    // 正解数カウント
-    let correctAnswers = 0;
+        // 正解数カウント
+        let correctAnswers = 0;
 
-    function checkAnswer(index, inputId, resultId) {
-        const input = document.getElementById(inputId).value.trim().toLowerCase();
-        const hash = sha256(input);
-        const resultElement = document.getElementById(resultId);
+        function checkAnswer(index, inputId, resultId) {
+            const input = document.getElementById(inputId).value.trim().toLowerCase();
+            const hash = sha256(input);
+            const resultElement = document.getElementById(resultId);
 
-        if (hash === questions[index].answer) {
-            resultElement.textContent = '正解!';
-            resultElement.style.color = 'green';
-            correctAnswers++;
-        } else {
-            resultElement.textContent = '不正解です。もう一度考えてみてください。';
-            resultElement.style.color = 'red';
+            if (hash === questions[index].answer) {
+                resultElement.textContent = '正解!';
+                resultElement.style.color = 'green';
+                correctAnswers++;
+            } else {
+                resultElement.textContent = '不正解です。もう一度考えてみてください。';
+                resultElement.style.color = 'red';
+            }
+
+            // 全問正解で転移
+            if (correctAnswers === questions.length) {
+                setTimeout(() => {
+                    const redirectUrl = location.href.replace('/genesis/', '/');
+                    location.replace(redirectUrl);
+                }, 1000);
+            }
         }
 
-        // 全問正解で転移
-        if (correctAnswers === questions.length) {
-            setTimeout(() => {
-                const redirectUrl = location.href.replace('/genesis/', '/');
-                location.replace(redirectUrl);
-            }, 1000);
-        }
-    }
-
-    // 問題を動的生成
-    window.onload = function() {
-        const quizContainer = document.getElementById('quiz-container');
-        questions.forEach((q, index) => {
-            quizContainer.innerHTML += `
-                <div class="quiz">
-                    <p>問題${index + 1}: ${q.question}</p>
-                    <input id="quiz${index}" type="text" placeholder="答えを入力">
-                    <button onclick="checkAnswer(${index}, 'quiz${index}', 'result${index}')">答え合わせ</button>
-                    <p id="result${index}" class="result"></p>
-                </div>
-            `;
-        });
-    };
-</script>
+        // 問題を動的生成
+        window.onload = function() {
+            const quizContainer = document.getElementById('quiz-container');
+            questions.forEach((q, index) => {
+                quizContainer.innerHTML += `
+                    <div class="quiz">
+                        <p>問題${index + 1}: ${q.question}</p>
+                        <input id="quiz${index}" type="text" placeholder="答えを入力">
+                        <button onclick="checkAnswer(${index}, 'quiz${index}', 'result${index}')">答え合わせ</button>
+                        <p id="result${index}" class="result"></p>
+                    </div>
+                `;
+            });
+        };
+    </script>
+</body>
+</html>
