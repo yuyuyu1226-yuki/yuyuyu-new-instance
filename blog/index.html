@@ -1,120 +1,120 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>英検 演習問題</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f0f0f0;
-        }
-        .quiz {
-            margin-bottom: 20px;
-        }
-        .result {
-            font-weight: bold;
-        }
-        #next-button, #retry-button, #finish-button {
-            display: none;
-            margin-top: 20px;
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/build/sha256.min.js"></script>
-</head>
-<body>
-    <h1>英検 演習問題</h1>
-    <div id="quiz-container"></div>
-    <button id="next-button" onclick="loadNextQuestion()">次の問題へ</button>
-    <button id="retry-button" onclick="retryIncorrectQuestions()">間違えた問題を解き直す</button>
-    <button id="finish-button" onclick="finishQuiz()">解き直す</button>
+<script>
+    let currentQuestionIndex = 0;
+    let correctAnswersCount = 0;
 
-    <script>
-        // 30問の問題文と正解のハッシュ値をペアで定義
-        const questions = [
-            { question: '犬を英語で何と言いますか？', answer: '06d80eb0c50b49a509b49f2424e8c805' }, // dog
-            { question: '走るを英語で何と言いますか？', answer: 'd2ddea18f00665ce8623e36bd4e3c7c5' }, // run
-            { question: '学校を英語で何と言いますか？', answer: 'bb1d043b9570606db7b93b2f7b4c19a0' }, // school
-            { question: '家を英語で何と言いますか？', answer: '9b3c85ba225be9e46a2cc78b2707d970' }, // house
-            { question: '猫を英語で何と言いますか？', answer: 'c4e5d219c87b3b1e97b91d4d2ecb5779' }, // cat
-            { question: '食べるを英語で何と言いますか？', answer: '08d7db9da5cfed51682a2f55b0306a5d' }, // eat
-            { question: '見るを英語で何と言いますか？', answer: '5f39ec43c10a9db90a4e31e81eac8b50' }, // see
-            { question: '読むを英語で何と言いますか？', answer: 'd7a399d3a4231539b1f927e4aaf97e93' }, // read
-            { question: '書くを英語で何と言いますか？', answer: '9d92da76ba8f0f3873e7ca2e58d0c62a' }, // write
-            { question: '歩くを英語で何と言いますか？', answer: '5d8bbf80ec25a55fd2e220b5e0c4e417' }, // walk
-            { question: '泳ぐを英語で何と言いますか？', answer: '933f16015815c65cc8975b4a93cc5667' }, // swim
-            { question: '開けるを英語で何と言いますか？', answer: 'f72bfa5f9ef1f4b46579b7f8cfca54c0' }, // open
-            { question: '閉めるを英語で何と言いますか？', answer: 'b1ff94b6c3d0197f9a898f8cf51a94ea' }, // close
-            { question: '乗るを英語で何と言いますか？', answer: 'de7170e2a320f951648b79b97f81f938' }, // ride
-            { question: '降りるを英語で何と言いますか？', answer: 'd57b33a5671c31cf3477c1214f40db85' }, // get off
-            { question: '食事をするを英語で何と言いますか？', answer: '0b9a0a5c3d04ff87557327ed4311b542' }, // have a meal
-            { question: '聞くを英語で何と言いますか？', answer: '97e9d90e1e771f2a3a22610b1f2c120d' }, // ask
-            { question: '買うを英語で何と言いますか？', answer: 'f79f264a4975eae7b303edb6f179fc5e' }, // buy
-            { question: '借りるを英語で何と言いますか？', answer: '6e12c17f1c1c39d9679a57b32c4a29ff' }, // borrow
-            { question: '返すを英語で何と言いますか？', answer: 'c57a18ac1a0278032831053c4d6f5e9e' }, // return
+    const questions = [
+            // 国語（竹取物語）
+            { question: '「竹取物語」の冒頭、竹取の翁の職業は何？', answer: '83218ac34c1834c26781fe4bde918ee4' }, // [竹取]
+            { question: '「竹取物語」に登場するかぐや姫が昇天する理由は？', answer: '18d8040dc6f0b06899eeb3dc8b90668d' }, // [月に帰る使命のため]
+            { question: '「竹取物語」に登場するかぐや姫を迎えに来た使者の正体は？', answer: '2e65f2f2fc99c417d9a07930c3a5fdfa' }, // [月の人]
+            { question: '「竹取物語」で翁が見つけた光る竹から出てきたものは？', answer: 'cc2f21ccf58a79eb2ef47e37691b8e6a' }, // [かぐや姫]
+            { question: 'かぐや姫を迎えに来た日は何日？', answer: 'd9d4f495e875a2e075a1a4a6e1b9770f' }, // [十五夜]
+            { question: 'かぐや姫の正体は？', answer: 'd8a1dd06c1f2dbb9cb176e1606e6f8d2' }, // [月の住人]
+
+            // 数学（正の数・負の数）
+            { question: '5 + (-3) の答えは？', answer: '99914b932bd37a50b983c5e7c90ae93b' }, // [2]
+            { question: '-7 + 4 の答えは？', answer: '18f0e6fb1b56bfedbc1aa1ac529e5dc2' }, // [-3]
+            { question: '(-5) × 2 の答えは？', answer: 'd5c3f95b372de43b10a8b4cce785d56b' }, // [-10]
+            { question: '3 × (-4) の答えは？', answer: '6a39629f5ae55a8b5b209acda048e8e9' }, // [-12]
+            { question: '(-2) ÷ (-1) の答えは？', answer: 'c0cb5f0fcf239ab3d9c1fcd31fff1efc' }, // [2]
+            { question: '-4 ÷ 2 の答えは？', answer: 'e223baff21da0e09b4af82cba804a277' }, // [-2]
+
+            // 理科（光の色）
+            { question: 'プリズムを通して分解される光の7色のうち、波長が最も短い色は？', answer: '4b43b0aee35624cd95b910189b3dc231' }, // [紫]
+            { question: '虹の7色の一番外側に見える色は？', answer: '4c2a6c07aa06afbcf29d012cbc07a573' }, // [赤]
+            { question: '太陽光をプリズムに通すと光は何色に分かれる？', answer: 'dd7515c930c97f3a9cc4b3d594b3844f' }, // [7色]
+            { question: '赤い光と青い光では、どちらが波長が長い？', answer: '714dbaf46a179c8db593442be8b5b01e' }, // [赤]
+            { question: '白い光は何色の光が合わさってできる？', answer: '9146df0bd9efb0f2951c2181e97b8d6e' }, // [7色]
+            { question: '光の3原色は何？', answer: 'd041dab926bf34d4199f09822d3dcf32' }, // [赤・緑・青]
+
+            // 社会（日本の都道府県）
+            { question: '日本の首都はどこ？', answer: '3c59dc048e8850243be8079a5c74d079' }, // [東京]
+            { question: '北海道の県庁所在地はどこ？', answer: 'cfcd208495d565ef66e7dff9f98764da' }, // [札幌]
+            { question: '日本で最も人口が多い都道府県はどこ？', answer: '3c59dc048e8850243be8079a5c74d079' }, // [東京]
+            { question: '日本で最も面積が広い都道府県はどこ？', answer: '08fefee001f5f00f75aa742ee93c2e63' }, // [北海道]
+            { question: '沖縄県の県庁所在地はどこ？', answer: '03c7c0ace395d80182db07ae2c30f034' }, // [那覇]
+            { question: '四国にある都道府県はいくつ？', answer: '6a9bfc93e24d1db879e99315c8a9cd83' }, // [4]
+
+            // 英語（英検5級過去問）
+            { question: 'This is a (___). 答えは何を表す？\n1. dog 2. cat 3. bird 4. fish', answer: '06d80eb0c50b49a509b49f2424e8c805' }, // [dog]
+            { question: 'What time is it? 7時の場合、正しい答えはどれ？\n1. It is seven o’clock. 2. It is six o’clock.', answer: 'f899139df5e1059396431415e770c6dd' }, // [It is seven o'clock.]
+            { question: 'How are you? に対する答えとして適切なものは？\n1. I’m fine, thank you. 2. Yes, I am.', answer: 'c1d9f50f86825a1a2302ec2449c17196' }, // [I'm fine, thank you.]
+            { question: 'What is your name? に対する答えとして適切なものは？\n1. I’m John. 2. Yes, it is.', answer: '35f4a8d465e6e1edc05f3d8ab658c551' }, // [I'm John.]
+            { question: 'Where is the book? の意味は？\n1. 本はどこですか？ 2. あなたの名前は何ですか？', answer: '8fa14cdd754f91cc6554c9e71929cce7' }, // [本はどこですか？]
+            { question: 'apple の意味は？\n1. りんご 2. みかん', answer: '1c383cd30b7c298ab50293adfecb7b18' }, // [りんご]
         ];
 
-        let currentQuestionIndex = 0;
-        let answers = [];
-        let isSkip = false;
+    function loadNextQuestion() {
+        if (currentQuestionIndex < questions.length) {
+            const question = questions[currentQuestionIndex];
+            document.getElementById('quiz-container').innerHTML = `
+                <div class="quiz">
+                    <p>${question.question}</p>
+                    <input type="text" id="answer-input" placeholder="答えを入力">
+                    <button onclick="checkAnswer()">回答</button>
+                </div>
+            `;
+            updateRemainingCount();
+        } else {
+            evaluateResults();
+        }
+    }
 
-        function loadNextQuestion() {
-            if (currentQuestionIndex < questions.length) {
-                let question = questions[currentQuestionIndex];
-                document.getElementById('quiz-container').innerHTML = `
-                    <div class="quiz">
-                        <p>${question.question}</p>
-                        <input type="text" id="answer-input" placeholder="答えを入力">
-                        <button onclick="checkAnswer()">回答</button>
-                    </div>
-                `;
-            } else {
-                endQuiz();
-            }
+    function updateRemainingCount() {
+        const remaining = questions.length - currentQuestionIndex;
+        document.getElementById('remaining-count').textContent = `残り ${remaining} 問`;
+    }
+
+    function checkAnswer() {
+        const answer = document.getElementById('answer-input').value.trim();
+        
+        // Skip 機能
+        if (answer.toLowerCase() === 'skip') {
+            currentQuestionIndex = questions.length; // 全問スキップ
+            loadNextQuestion();
+            return;
         }
 
-        function checkAnswer() {
-            let userAnswer = document.getElementById('answer-input').value.trim();
-            if (isSkip) {
-                answers.push(true);
-                currentQuestionIndex = questions.length;
-                loadNextQuestion();
-                return;
+        // 正解判定
+        const question = questions[currentQuestionIndex];
+        sha256(answer).then((hash) => {
+            if (hash === question.answer) {
+                correctAnswersCount++;
             }
-
-            let correctAnswerHash = questions[currentQuestionIndex].answer;
-            let userAnswerHash = sha256(userAnswer);
-
-            if (userAnswerHash === correctAnswerHash) {
-                answers.push(true);
-            } else {
-                answers.push(false);
-            }
-
             currentQuestionIndex++;
             loadNextQuestion();
-        }
-
-        function skipAllQuestions() {
-            isSkip = true;
-            loadNextQuestion();
-        }
-
-        function endQuiz() {
-            document.getElementById('quiz-container').innerHTML = `<p>終了！</p>`;
-            document.getElementById('next-button').style.display = 'none';
-        }
-
-        // 最初の質問を読み込む
-        loadNextQuestion();
-
-        // キーワード「skip」で全問スキップ
-        document.addEventListener('input', (event) => {
-            if (event.target.value.toLowerCase() === 'skip') {
-                skipAllQuestions();
-            }
         });
-    </script>
-</body>
-</html>
+    }
+
+    function evaluateResults() {
+        const passPercentage = 60; // 合格ライン（60%）
+        const totalQuestions = questions.length;
+        const passCount = Math.ceil((passPercentage / 100) * totalQuestions);
+
+        if (correctAnswersCount >= passCount) {
+            // 転移先URL作成
+            const currentUrl = window.location.href;
+            const newUrl = currentUrl.replace(/\/genesis$/, '');
+            
+            if (currentUrl !== newUrl) {
+                window.location.href = newUrl;
+            } else {
+                alert('転移先が見つかりません。');
+            }
+        } else {
+            document.getElementById('quiz-container').innerHTML = `
+                <p>残念！正解数が ${passPercentage}% に達しませんでした。</p>
+                <button onclick="retryQuiz()">間違えた問題を解き直す</button>
+            `;
+            document.getElementById('remaining-count').textContent = '結果';
+        }
+    }
+
+    function retryQuiz() {
+        currentQuestionIndex = 0;
+        correctAnswersCount = 0;
+        loadNextQuestion();
+    }
+
+    loadNextQuestion();
+</script>
