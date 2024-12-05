@@ -127,6 +127,7 @@
     
     // Skip 機能
     if (answer.toLowerCase() === 'skip') {
+        correctAnswersCount = questions.length; // 全問正解として扱う
         currentQuestionIndex = questions.length; // 全問スキップ
         evaluateResults();
         return;
@@ -142,6 +143,7 @@
         loadNextQuestion();
     });
 }
+
 
 
         function evaluateResults() {
