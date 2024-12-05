@@ -123,25 +123,26 @@
         }
 
         function checkAnswer() {
-            const answer = document.getElementById('answer-input').value.trim();
-            
-            // Skip 機能
-            if (answer.toLowerCase() === 'skip') {
-                currentQuestionIndex = questions.length; // 全問スキップ
-                evaluateResults();
-                return;
-            }
+    const answer = document.getElementById('answer-input').value.trim();
+    
+    // Skip 機能
+    if (answer.toLowerCase() === 'skip') {
+        currentQuestionIndex = questions.length; // 全問スキップ
+        evaluateResults();
+        return;
+    }
 
-            // 正解判定
-            const question = questions[currentQuestionIndex];
-            sha256(answer).then((hash) => {
-                if (hash === question.answer) {
-                    correctAnswersCount++;
-                }
-                currentQuestionIndex++;
-                loadNextQuestion();
-            });
+    // 正解判定
+    const question = questions[currentQuestionIndex];
+    sha256(answer).then((hash) => {
+        if (hash === question.answer) {
+            correctAnswersCount++;
         }
+        currentQuestionIndex++;
+        loadNextQuestion();
+    });
+}
+
 
         function evaluateResults() {
             const passPercentage = 60; // 合格ライン（60%）
