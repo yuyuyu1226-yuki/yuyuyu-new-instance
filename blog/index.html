@@ -33,45 +33,32 @@
     <script>
         // 30問の問題文と正解のハッシュ値をペアで定義
         const questions = [
-            { question: '犬を英語で何と言いますか？', answer: '06d80eb0c50b49a509b49f2424e8c805' }, // [答え] dog
-            { question: '走るを英語で何と言いますか？', answer: 'd2ddea18f00665ce8623e36bd4e3c7c5' }, // [答え] run
-            { question: '猫を英語で何と言いますか？', answer: '09f7e02f1290be211da707a266f153b3' }, // [答え] cat
-            { question: '学校を英語で何と言いますか？', answer: 'd2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2' }, // [答え] school
-            { question: '本を英語で何と言いますか？', answer: 'bf4d5e6b4c52c7e8d8a36d5cb5c72d8c' }, // [答え] book
-            { question: '食べるを英語で何と言いますか？', answer: 'aab60a658f09b6b8f7cbd8e4d545f5d1' }, // [答え] eat
-            { question: '走るを英語で何と言いますか？', answer: 'd2ddea18f00665ce8623e36bd4e3c7c5' }, // [答え] run
-            { question: '天気を英語で何と言いますか？', answer: 'c6d2d8e8d93d06c07d6c8d4d13b24693' }, // [答え] weather
-            { question: '空を英語で何と言いますか？', answer: 'ef98b010e21340ac8b9fd1b8b77a8b60' }, // [答え] sky
-            { question: '海を英語で何と言いますか？', answer: 'dfaad23fbe826fd3857e9f9f8da7a2d2' }, // [答え] sea
-            { question: '山を英語で何と言いますか？', answer: 'f823bf8367b6a682fc645b320c5f505f' }, // [答え] mountain
-            { question: '川を英語で何と言いますか？', answer: '3e1377f7840d6f4e7c11eb34672b1a9a' }, // [答え] river
-            { question: '昼を英語で何と言いますか？', answer: 'a98e03d3c4fd97d8bc2c8e5e7ff3125a' }, // [答え] daytime
-            { question: '夜を英語で何と言いますか？', answer: 'f1d2d2f924e986ac86fdf7b19cb5d01b' }, // [答え] night
-            { question: '朝を英語で何と言いますか？', answer: '7f19e0c95e48bfa0cf34a3d7f5981cfa' }, // [答え] morning
-            { question: '友達を英語で何と言いますか？', answer: 'fc5e038d38a57032085441e7fe70b0f9' }, // [答え] friend
-            { question: '車を英語で何と言いますか？', answer: '21d1b74eb015d1e4d7815e0474134f07' }, // [答え] car
-            { question: '自転車を英語で何と言いますか？', answer: 'b6c75e31240f56b85c2346c3a6b61e7d' }, // [答え] bicycle
-            { question: 'コンピュータを英語で何と言いますか？', answer: '44d88612fea8a8f36de82e1278abb02f' }, // [答え] computer
-            { question: 'スマホを英語で何と言いますか？', answer: '7fbd6a0f57e268ba8f535f2d42cf3b96' }, // [答え] smartphone
-            { question: '映画を英語で何と言いますか？', answer: '9e107d9d372bb6826bd81d3542a419d6' }, // [答え] movie
-            { question: '音楽を英語で何と言いますか？', answer: '2e7d2c03a9507ae265ecf5b535d78f8f' }, // [答え] music
-            { question: '本を読むを英語で何と言いますか？', answer: 'c4ca4238a0b923820dcc509a6f75849b' }, // [答え] read a book
-            { question: '歩くを英語で何と言いますか？', answer: '0191989f5dcb3e93b3822cb1e4c77856' }, // [答え] walk
-            { question: '食事を英語で何と言いますか？', answer: '1dcca23355272056f04eae6d2a9b2f6d' }, // [答え] meal
-            { question: '笑うを英語で何と言いますか？', answer: 'ab56b4d92b40713acc5af89985d2f1f2' }, // [答え] laugh
-            { question: '泣くを英語で何と言いますか？', answer: 'cc2db66494cc4db41129e1f58986f50f' }, // [答え] cry
-            { question: '読むを英語で何と言いますか？', answer: '7d4b1f5d99b4cbd7ca59d0dfd3db40b7' }, // [答え] read
-            { question: '見るを英語で何と言いますか？', answer: '2cb72a929dddbf6c58db9f458f618618' }, // [答え] see
-            { question: '聞くを英語で何と言いますか？', answer: 'bd69e1c5f4ae1f255ee6d3c35b7cda29' }, // [答え] hear
-            { question: '勉強を英語で何と言いますか？', answer: '7db4f7b09b29ff849676340ea89f1d6f' }, // [答え] study
-            { question: '学校へ行くを英語で何と言いますか？', answer: 'ae37cfd1d1e0c0adf9fe1e5a1a83ff3a' }, // [答え] go to school
-            { question: '遊ぶを英語で何と言いますか？', answer: '5a9c97f09c598a6a32b63202d9a6d47c' }, // [答え] play
-            { question: 'お金を英語で何と言いますか？', answer: 'f62e61f9e2c27b8e7cb9cbfae8cb12a9' }, // [答え] money
+            { question: '犬を英語で何と言いますか？', answer: '06d80eb0c50b49a509b49f2424e8c805' }, // dog
+            { question: '走るを英語で何と言いますか？', answer: 'd2ddea18f00665ce8623e36bd4e3c7c5' }, // run
+            { question: '学校を英語で何と言いますか？', answer: 'bb1d043b9570606db7b93b2f7b4c19a0' }, // school
+            { question: '家を英語で何と言いますか？', answer: '9b3c85ba225be9e46a2cc78b2707d970' }, // house
+            { question: '猫を英語で何と言いますか？', answer: 'c4e5d219c87b3b1e97b91d4d2ecb5779' }, // cat
+            { question: '食べるを英語で何と言いますか？', answer: '08d7db9da5cfed51682a2f55b0306a5d' }, // eat
+            { question: '見るを英語で何と言いますか？', answer: '5f39ec43c10a9db90a4e31e81eac8b50' }, // see
+            { question: '読むを英語で何と言いますか？', answer: 'd7a399d3a4231539b1f927e4aaf97e93' }, // read
+            { question: '書くを英語で何と言いますか？', answer: '9d92da76ba8f0f3873e7ca2e58d0c62a' }, // write
+            { question: '歩くを英語で何と言いますか？', answer: '5d8bbf80ec25a55fd2e220b5e0c4e417' }, // walk
+            { question: '泳ぐを英語で何と言いますか？', answer: '933f16015815c65cc8975b4a93cc5667' }, // swim
+            { question: '開けるを英語で何と言いますか？', answer: 'f72bfa5f9ef1f4b46579b7f8cfca54c0' }, // open
+            { question: '閉めるを英語で何と言いますか？', answer: 'b1ff94b6c3d0197f9a898f8cf51a94ea' }, // close
+            { question: '乗るを英語で何と言いますか？', answer: 'de7170e2a320f951648b79b97f81f938' }, // ride
+            { question: '降りるを英語で何と言いますか？', answer: 'd57b33a5671c31cf3477c1214f40db85' }, // get off
+            { question: '食事をするを英語で何と言いますか？', answer: '0b9a0a5c3d04ff87557327ed4311b542' }, // have a meal
+            { question: '聞くを英語で何と言いますか？', answer: '97e9d90e1e771f2a3a22610b1f2c120d' }, // ask
+            { question: '買うを英語で何と言いますか？', answer: 'f79f264a4975eae7b303edb6f179fc5e' }, // buy
+            { question: '借りるを英語で何と言いますか？', answer: '6e12c17f1c1c39d9679a57b32c4a29ff' }, // borrow
+            { question: '返すを英語で何と言いますか？', answer: 'c57a18ac1a0278032831053c4d6f5e9e' }, // return
         ];
-        
+
         let currentQuestionIndex = 0;
         let answers = [];
-        
+        let isSkip = false;
+
         function loadNextQuestion() {
             if (currentQuestionIndex < questions.length) {
                 let question = questions[currentQuestionIndex];
@@ -86,12 +73,19 @@
                 endQuiz();
             }
         }
-        
+
         function checkAnswer() {
             let userAnswer = document.getElementById('answer-input').value.trim();
+            if (isSkip) {
+                answers.push(true);
+                currentQuestionIndex = questions.length;
+                loadNextQuestion();
+                return;
+            }
+
             let correctAnswerHash = questions[currentQuestionIndex].answer;
             let userAnswerHash = sha256(userAnswer);
-            
+
             if (userAnswerHash === correctAnswerHash) {
                 answers.push(true);
             } else {
@@ -103,10 +97,10 @@
         }
 
         function skipAllQuestions() {
-            answers = new Array(questions.length).fill(true);  // 全問正解として扱う
+            isSkip = true;
             loadNextQuestion();
         }
-        
+
         function endQuiz() {
             document.getElementById('quiz-container').innerHTML = `<p>終了！</p>`;
             document.getElementById('next-button').style.display = 'none';
