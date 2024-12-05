@@ -1,187 +1,62 @@
-<!DOCTYPE html>
-<html lang="ja">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>英検の級別目安と演習問題</title>
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background-color: #f9f9f9;
-                color: #333;
-                line-height: 1.6;
-            }
-            
-            nav {
-                width: 100%;
-                height: 70px;
-                background-color: dimgray;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 1.5em;
-            }
+<script>
+    // 問題文と正解のハッシュ値をペアで定義
+    const questions = [
+        { question: '犬を英語で何と言いますか？', answer: '06d80eb0c50b49a509b49f2424e8c805' }, // dog
+        { question: '走るを英語で何と言いますか？', answer: 'd2ddea18f00665ce8623e36bd4e3c7c5' }, // run
+        { question: '猫を英語で何と言いますか？', answer: '09f7e02f1290be211da707a266f153b3' }, // cat
+        { question: 'ジャンプを英語で何と言いますか？', answer: '8f434346ec02e6dcf3c53bd6a870b4ac' }, // jump
+        { question: '太陽を英語で何と言いますか？', answer: 'e1671797c52e15f763380b45e841ec32' }, // sun
+        { question: '月を英語で何と言いますか？', answer: '68b329da9893e34099c7d8ad5cb9c940' }, // moon
+        { question: '木を英語で何と言いますか？', answer: 'e2ef524fbf3d9fe611d5a8e90fefdc9c' }, // tree
+        { question: '「パスワード」を英語で入力してください。', answer: '5e884898da28047151d0e56f8dc62927' }, // password
+        { question: 'テストを英語で何と言いますか？', answer: '098f6bcd4621d373cade4e832627b4f6' }, // test
+        { question: '挨拶の「こんにちは」を英語で何と言いますか？', answer: '8c6976e5b5410415bde908bd4dee15df' }, // hello
+        { question: '「世界」を英語で何と言いますか？', answer: '5d41402abc4b2a76b9719d911017c592' }, // world
+        { question: '英語で「良い朝」はどう表現しますか？', answer: '8277e0910d750195b448797616e091ad' }, // morning
+        { question: '英語で「答え」は何と言いますか？', answer: '4b43b0aee35624cd95b910189b3dc231' }, // answer
+        { question: '数字「123」を入力してください。', answer: '202cb962ac59075b964b07152d234b70' }, // 123
+        { question: '英語で「最終的な」は何と言いますか？', answer: '1f3870be274f6c49b3e31a0c6728957f' } // final
+        { question: '英語で「お父さん」は何といいますか？', answer: '88a1881f0025cf7117501d07aefc5d4be6696656790d765678df8bc48ca52687'
+    ];
 
-            main {
-                padding: 20px;
-                max-width: 800px;
-                margin: 0 auto;
-                background-color: #fff;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                border-radius: 10px;
-            }
+    // 正解数カウント
+    let correctAnswers = 0;
 
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 20px;
-            }
+    function checkAnswer(index, inputId, resultId) {
+        const input = document.getElementById(inputId).value.trim().toLowerCase();
+        const hash = sha256(input);
+        const resultElement = document.getElementById(resultId);
 
-            table th, table td {
-                border: 1px solid #ddd;
-                padding: 10px;
-                text-align: center;
-            }
+        if (hash === questions[index].answer) {
+            resultElement.textContent = '正解!';
+            resultElement.style.color = 'green';
+            correctAnswers++;
+        } else {
+            resultElement.textContent = '不正解です。もう一度考えてみてください。';
+            resultElement.style.color = 'red';
+        }
 
-            table th {
-                background-color: #f4f4f4;
-            }
+        // 全問正解で転移
+        if (correctAnswers === questions.length) {
+            setTimeout(() => {
+                const redirectUrl = location.href.replace('/genesis/', '/');
+                location.replace(redirectUrl);
+            }, 1000);
+        }
+    }
 
-            footer {
-                text-align: center;
-                margin-top: 20px;
-            }
-
-            input[type="text"] {
-                padding: 10px;
-                width: 70%;
-                margin-right: 10px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                font-size: 1em;
-            }
-
-            button {
-                padding: 10px 20px;
-                font-size: 1em;
-                background-color: dimgray;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-
-            button:hover {
-                background-color: #555;
-            }
-
-            @media (max-width: 600px) {
-                nav {
-                    font-size: 1.2em;
-                }
-
-                input[type="text"] {
-                    width: 60%;
-                }
-            }
-
-            .quiz {
-                margin-top: 30px;
-            }
-
-            .quiz p {
-                margin-bottom: 10px;
-            }
-
-            .quiz .result {
-                font-weight: bold;
-                margin-top: 10px;
-            }
-        </style>
-        <script src="/js/utils/utils.js"></script>
-        <script>
-            function checkAnswer(userAnswer, correctAnswer, resultId) {
-                const input = document.getElementById(userAnswer).value.trim().toLowerCase();
-                sha256(input).then((hash) => {
-                    if (hash === correctAnswer) {
-                        document.getElementById(resultId).textContent = '正解!';
-                        document.getElementById(resultId).style.color = 'green';
-                    } else {
-                        document.getElementById(resultId).textContent = '不正解です。もう一度考えてみてください。';
-                        document.getElementById(resultId).style.color = 'red';
-                    }
-                });
-            }
-        </script>
-    </head>
-    <body>
-        <header>
-            <nav>
-                英検 各級の目安と演習問題
-            </nav>
-        </header>
-
-        <main>
-            <h2>英検 各級の目安</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>級</th>
-                        <th>目安</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>5級</td>
-                        <td>中学初級程度</td>
-                    </tr>
-                    <tr>
-                        <td>4級</td>
-                        <td>中学中級程度</td>
-                    </tr>
-                    <tr>
-                        <td>3級</td>
-                        <td>中学卒業程度</td>
-                    </tr>
-                    <tr>
-                        <td>準2級</td>
-                        <td>高校中級程度</td>
-                    </tr>
-                    <tr>
-                        <td>2級</td>
-                        <td>高校卒業程度</td>
-                    </tr>
-                    <tr>
-                        <td>準1級</td>
-                        <td>大学中級程度</td>
-                    </tr>
-                    <tr>
-                        <td>1級</td>
-                        <td>大学上級程度</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h2>英検 演習問題</h2>
-            <div class="quiz">
-                <p>問題1: 「犬」を英語で何と言いますか？</p>
-                <input id="quiz1" type="text" placeholder="答えを入力">
-                <button onclick="checkAnswer('quiz1', '4d186321c1a7f0f354b297e8914ab240', 'result1')">答え合わせ</button>
-                <p id="result1" class="result"></p>
-            </div>
-
-            <div class="quiz">
-                <p>問題2: 「走る」を英語で何と言いますか？</p>
-                <input id="quiz2" type="text" placeholder="答えを入力">
-                <button onclick="checkAnswer('quiz2', '5d41402abc4b2a76b9719d911017c592', 'result2')">答え合わせ</button>
-                <p id="result2" class="result"></p>
-            </div>
-        </main>
-
-        <footer>
-            <p>&copy; 2024 英検演習</p>
-        </footer>
-    </body>
-</html>
+    // 問題を動的生成
+    window.onload = function() {
+        const quizContainer = document.getElementById('quiz-container');
+        questions.forEach((q, index) => {
+            quizContainer.innerHTML += `
+                <div class="quiz">
+                    <p>問題${index + 1}: ${q.question}</p>
+                    <input id="quiz${index}" type="text" placeholder="答えを入力">
+                    <button onclick="checkAnswer(${index}, 'quiz${index}', 'result${index}')">答え合わせ</button>
+                    <p id="result${index}" class="result"></p>
+                </div>
+            `;
+        });
+    };
+</script>
