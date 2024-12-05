@@ -3,36 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>総合問題 演習</title>
+    <title>クイズチャレンジ</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f0f0f0;
+            text-align: center;
+            margin: 0;
+            padding: 0;
         }
         header {
-            text-align: center;
-            margin-bottom: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px 0;
         }
         #remaining-count {
-            font-size: 2em;
+            font-size: 24px;
             font-weight: bold;
-            color: red;
             margin: 20px 0;
         }
-        .quiz {
-            margin-bottom: 20px;
+        #quiz-container {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
         }
-        #next-button, #retry-button, #finish-button {
-            display: none;
-            margin-top: 20px;
+        .quiz {
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: calc(100% - 22px);
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
         }
     </style>
+    <script src="/js/utils/utils.js"></script>
+</head>
+<body>
+    <header>
+        <h1>クイズチャレンジ</h1>
+    </header>
+    <div id="remaining-count">残り 30 問</div>
+    <div id="quiz-container"></div>
     <script>
-    let currentQuestionIndex = 0;
-    let correctAnswersCount = 0;
+        let currentQuestionIndex = 0;
+        let correctAnswersCount = 0;
 
-    const questions = [
+         const questions = [
             // 国語（竹取物語）
             { question: '「竹取物語」の冒頭、竹取の翁の職業は何？', answer: '83218ac34c1834c26781fe4bde918ee4' }, // [竹取]
             { question: '「竹取物語」に登場するかぐや姫が昇天する理由は？', answer: '18d8040dc6f0b06899eeb3dc8b90668d' }, // [月に帰る使命のため]
@@ -74,80 +101,79 @@
             { question: 'apple の意味は？\n1. りんご 2. みかん', answer: '1c383cd30b7c298ab50293adfecb7b18' }, // [りんご]
         ];
 
-    function loadNextQuestion() {
-        if (currentQuestionIndex < questions.length) {
-            const question = questions[currentQuestionIndex];
-            document.getElementById('quiz-container').innerHTML = `
-                <div class="quiz">
-                    <p>${question.question}</p>
-                    <input type="text" id="answer-input" placeholder="答えを入力">
-                    <button onclick="checkAnswer()">回答</button>
-                </div>
-            `;
-            updateRemainingCount();
-        } else {
-            evaluateResults();
-        }
-    }
-
-    function updateRemainingCount() {
-        const remaining = questions.length - currentQuestionIndex;
-        document.getElementById('remaining-count').textContent = `残り ${remaining} 問`;
-    }
-
-    function checkAnswer() {
-        const answer = document.getElementById('answer-input').value.trim();
-        
-        // Skip 機能
-        if (answer.toLowerCase() === 'skip') {
-            currentQuestionIndex = questions.length; // 全問スキップ
-            loadNextQuestion();
-            return;
-        }
-
-        // 正解判定
-        const question = questions[currentQuestionIndex];
-        sha256(answer).then((hash) => {
-            if (hash === question.answer) {
-                correctAnswersCount++;
-            }
-            currentQuestionIndex++;
-            loadNextQuestion();
-        });
-    }
-
-    function evaluateResults() {
-        const passPercentage = 60; // 合格ライン（60%）
-        const totalQuestions = questions.length;
-        const passCount = Math.ceil((passPercentage / 100) * totalQuestions);
-
-        if (correctAnswersCount >= passCount) {
-            // 転移先URL作成
-            const currentUrl = window.location.href;
-            const newUrl = currentUrl.replace(/\/genesis$/, '');
-            
-            if (currentUrl !== newUrl) {
-                window.location.href = newUrl;
+        function loadNextQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const question = questions[currentQuestionIndex];
+                document.getElementById('quiz-container').innerHTML = `
+                    <div class="quiz">
+                        <p>${question.question}</p>
+                        <input type="text" id="answer-input" placeholder="答えを入力">
+                        <button onclick="checkAnswer()">回答</button>
+                    </div>
+                `;
+                updateRemainingCount();
             } else {
-                alert('転移先が見つかりません。');
+                evaluateResults();
             }
-        } else {
-            document.getElementById('quiz-container').innerHTML = `
-                <p>残念！正解数が ${passPercentage}% に達しませんでした。</p>
-                <button onclick="retryQuiz()">間違えた問題を解き直す</button>
-            `;
-            document.getElementById('remaining-count').textContent = '結果';
         }
-    }
 
-    function retryQuiz() {
-        currentQuestionIndex = 0;
-        correctAnswersCount = 0;
+        function updateRemainingCount() {
+            const remaining = questions.length - currentQuestionIndex;
+            document.getElementById('remaining-count').textContent = `残り ${remaining} 問`;
+        }
+
+        function checkAnswer() {
+            const answer = document.getElementById('answer-input').value.trim();
+            
+            // Skip 機能
+            if (answer.toLowerCase() === 'skip') {
+                currentQuestionIndex = questions.length; // 全問スキップ
+                evaluateResults();
+                return;
+            }
+
+            // 正解判定
+            const question = questions[currentQuestionIndex];
+            sha256(answer).then((hash) => {
+                if (hash === question.answer) {
+                    correctAnswersCount++;
+                }
+                currentQuestionIndex++;
+                loadNextQuestion();
+            });
+        }
+
+        function evaluateResults() {
+            const passPercentage = 60; // 合格ライン（60%）
+            const totalQuestions = questions.length;
+            const passCount = Math.ceil((passPercentage / 100) * totalQuestions);
+
+            if (correctAnswersCount >= passCount) {
+                // 転移先URL作成
+                const currentUrl = window.location.href;
+                const newUrl = currentUrl.replace(/\/genesis$/, '');
+                
+                if (currentUrl !== newUrl) {
+                    window.location.href = newUrl;
+                } else {
+                    alert('転移先が見つかりません。');
+                }
+            } else {
+                document.getElementById('quiz-container').innerHTML = `
+                    <p>残念！正解数が ${passPercentage}% に達しませんでした。</p>
+                    <button onclick="retryQuiz()">間違えた問題を解き直す</button>
+                `;
+                document.getElementById('remaining-count').textContent = '結果';
+            }
+        }
+
+        function retryQuiz() {
+            currentQuestionIndex = 0;
+            correctAnswersCount = 0;
+            loadNextQuestion();
+        }
+
         loadNextQuestion();
-    }
-
-    loadNextQuestion();
-</script>
-
+    </script>
 </body>
 </html>
