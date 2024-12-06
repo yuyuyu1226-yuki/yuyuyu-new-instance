@@ -2,144 +2,53 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>中1全教科クイズ</title>
-    <style>
-        body {
-            margin: 0 auto;
-        }
-        nav {
-            width: 100%;
-            height: 70px;
-            background-color: dimgray;
-            padding-top: 5px;
-            box-sizing: border-box;
-        }
-        nav ul {
-            display: flex;
-        }
-        nav li {
-            list-style: none;
-        }
-        a {
-            display: block;
-            text-decoration: none;
-            color: white;
-            margin-right: 35px;
-        }
-        main {
-            background-color: #fefefe;
-        }
-    </style>
-    <script src="/js/utils/utils.js"></script>
+    <title>中学1年クイズ</title>
     <script>
-        // 正解のSHA-256ハッシュ値
-        const correctAnswers = [
-            "b7a8dd371d9f505b083b2c33c92f6cd2", // 未曾有
-            "d8f1e54d3511e39a130c949c29ba5d4d", // 五十歩百歩
-            "832a85459cce25206a28a7015f8807ac", // 形容詞
-            "d16dba0e3df2fcd4102f047202ea03ff", // かぐやひめ
-            "248a7c5f68eb28cd22c4b79afc3a024d", // 松尾芭蕉
-            "fc25194b7817d63093a33fc96ee0826a", // 12
-            "6588ad23b2d33ac0e9378c3247712036", // 180
-            "b8d8305e04a0d277c8556cf3bc7c92f9", // 9
-            "542c93b53a2acb81d2f57a2af8e212e0", // 12
-            "05b26b603ef2ac2a6c63f8b36d0344a1", // 2
-            "1c9c7fcdaab5102f8da62e3727ac62dc", // りんご
-            "a0b65939670bc28bfb212cf4c5a9f2db", // is
-            "01a5ff0f11ba297577d64d47311d9894", // city
-            "b6c8926e709c68ee5464d0c35a98b836", // 起きる
-            "d3e943dc5ef6ed8893c244f08033a31e", // I play the piano.
-            "479c9b8e364d623021bc465d14cbb4b6", // 二酸化炭素
-            "030d29c2b6e0241d18e2531a7b6e29c8", // 金属
-            "46028cf9958dd2a0af192c84f31cc8a2", // 水素と酸素
-            "fd55d43b61aa1c7a7e38bfaac2cfb30a", // アメーバ
-            "db9241cb46a46aaf1761b914b7b0b21a", // マグニチュード
-            "f2c48e4b472b122f4fa0de3481e0ecda", // 電流
-            "bf3a548ddc63a07013c17b9981eac5da", // 唾液
-            "6a1adf4597d6ac7ff1285dfd48f5632d", // 酸化
-            "083f6b850e375c9a5fa8a8dc04b03d92", // 距離÷時間
-            "db38db19400cc73e2e5d94688e7c8ab9", // 沈み込み帯
-            "e0f243785efbc0f771fa711474ba3c14", // 十七条憲法
-            "fd3fc22d46dc9fd80f2b175dbb01a78b", // 東京
-            "08c7e423af5cf1c9dba16f6876aebedb", // 民主主義・平和主義・基本的人権の尊重
-            "fb5fdf2b4a23047c18c150a6d2e5d520", // 北緯38度
-            "8eb02d4b97cfba3df3f29be8b5a8cfc6", // 楽市楽座
-        ];
-
-        // ユーザーの回答確認
         function checkAnswers() {
-            let userAnswers = document.querySelectorAll(".user-answer");
+            // 正解をプレーンテキストで定義
+            const correctAnswers = [
+                "みぞう",          // Q1 未曾有の読み方
+                "どちらも大差がない", // Q2 五十歩百歩の意味
+                "形容詞",         // Q3 「美しい」の品詞
+                "かぐや姫",        // Q4 竹取物語の主人公
+                "松尾芭蕉"         // Q5 俳句「古池や」の作者
+            ];
+
+            // ユーザーの入力値を取得
+            const userAnswers = Array.from(document.querySelectorAll(".user-answer")).map(input => input.value.trim());
             let correctCount = 0;
 
-            userAnswers.forEach((input, index) => {
-                sha256(input.value.trim()).then((hash) => {
-                    if (hash === correctAnswers[index]) {
-                        correctCount++;
-                    }
+            // 答えを比較
+            for (let i = 0; i < correctAnswers.length; i++) {
+                if (userAnswers[i] === correctAnswers[i]) {
+                    correctCount++;
+                }
+            }
 
-                    if (index === userAnswers.length - 1) {
-                        // 全回答を確認後に判定
-                        const score = (correctCount / correctAnswers.length) * 100;
-                        if (score >= 60) {
-                            document.cookie = "yuki=True; path=/";
-                            document.getElementById("result").textContent = "合格！";
-                            location.replace("/");
-                        } else {
-                            document.getElementById("result").textContent = `不合格... 正解数: ${correctCount}`;
-                        }
-                    }
-                });
-            });
+            // 正解率を計算
+            const score = (correctCount / correctAnswers.length) * 100;
+
+            // 合否判定とCookieの設定
+            if (score >= 60) {
+                document.cookie = "yuki=True; path=/";
+                document.getElementById("result").textContent = `合格！スコア: ${score}%`;
+            } else {
+                document.getElementById("result").textContent = `不合格。スコア: ${score}%`;
+            }
         }
     </script>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li style="color: white;">全教科クイズ</li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <h1>中1全教科クイズに挑戦！</h1>
-        <form id="quiz-form">
-    <ol>
-        <li>未曾有の読み方は？<input class="user-answer" type="text"> // みぞう</li>
-        <li>五十歩百歩の意味は？<input class="user-answer" type="text"> // 大差がないこと</li>
-        <li>「美しい」の品詞は？<input class="user-answer" type="text"> // 形容詞</li>
-        <li>竹取物語の主人公は？<input class="user-answer" type="text"> // かぐや姫</li>
-        <li>俳句「古池や」の作者は？<input class="user-answer" type="text"> // 松尾芭蕉</li>
-        <li>12の約数の個数は？<input class="user-answer" type="text"> // 6</li>
-        <li>三角形の内角の和は何度かは？<input class="user-answer" type="text"> // 180</li>
-        <li>√81の値はは？<input class="user-answer" type="text"> // 9</li>
-        <li>1ダースは何個かは？<input class="user-answer" type="text"> // 12</li>
-        <li>1+1はは？<input class="user-answer" type="text"> // 2</li>
-        <li>英語で「りんご」は？ <input class="user-answer" type="text"> // apple</li>
-        <li>He <u>___</u> a student. (適切な動詞を補完): <input class="user-answer" type="text"> // is</li>
-        <li>英語で「都市」の単語は？<input class="user-answer" type="text"> // city</li>
-        <li>「get up」の意味は？ <input class="user-answer" type="text"> // 起きる</li>
-        <li>「私はピアノを弾きます」を英語で？ <input class="user-answer" type="text"> // I play the piano.</li>
-        <li>炭酸水に含まれる気体は？ <input class="user-answer" type="text"> // 二酸化炭素</li>
-        <li>電気を通す金属の性質は？ <input class="user-answer" type="text"> // 導電性</li>
-        <li>水を電気分解したときに発生する2つの気体は？ <input class="user-answer" type="text"> // 水素と酸素</li>
-        <li>単細胞生物の例: <input class="user-answer" type="text"> // ゾウリムシ</li>
-        <li>地震の規模を表す単位は？ <input class="user-answer" type="text"> // マグニチュード</li>
-        <li>電池で発生するものは？ <input class="user-answer" type="text"> // 電流</li>
-        <li>消化液を出す器官のひとつはは？ <input class="user-answer" type="text"> // 胃</li>
-        <li>物質が酸素と化合することを何という？ <input class="user-answer" type="text"> // 酸化</li>
-        <li>速さを求める式は？ <input class="user-answer" type="text"> // 距離 ÷ 時間</li>
-        <li>プレートが沈み込む場所を何というか: <input class="user-answer" type="text"> // 海溝</li>
-        <li>聖徳太子が制定した法令の名前は？ <input class="user-answer" type="text"> // 十七条憲法</li>
-        <li>日本の首都は？ <input class="user-answer" type="text"> // 東京</li>
-        <li>日本国憲法の三大原則は？ <input class="user-answer" type="text"> // 国民主権、基本的人権の尊重、平和主義</li>
-        <li>朝鮮戦争の休戦ラインの緯度は？ <input class="user-answer" type="text"> // 北緯38度</li>
-        <li>織田信長が行った経済政策は？<input class="user-answer" type="text"> // 楽市楽座</li>
-    </ol>
-</form>
-
-        <button onclick="checkAnswers()">送信</button>
-        <p id="result"></p>
-    </main>
+    <form id="quiz-form">
+        <ol>
+            <li>未曾有の読み方: <input class="user-answer" type="text"></li>
+            <li>五十歩百歩の意味: <input class="user-answer" type="text"></li>
+            <li>「美しい」の品詞: <input class="user-answer" type="text"></li>
+            <li>竹取物語の主人公: <input class="user-answer" type="text"></li>
+            <li>俳句「古池や」の作者: <input class="user-answer" type="text"></li>
+        </ol>
+        <button type="button" onclick="checkAnswers()">採点する</button>
+    </form>
+    <p id="result"></p>
 </body>
 </html>
