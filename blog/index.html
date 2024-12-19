@@ -1,18 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="utf-8">
     <title>中学1年クイズ</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffe0e0;
+            color: #4a4a4a;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #ff69b4;
+            font-size: 36px;
+        }
+        ol {
+            text-align: left;
+            display: inline-block;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        li {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            margin-left: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #ff1493;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .result-buttons {
+            display: none;
+            margin-top: 20px;
+        }
+        .result-buttons button {
+            margin: 10px;
+            font-size: 16px;
+        }
+    </style>
     <script>
-        function checkAnswers() {
-            // 正解をプレーンテキストで定義
-            const correctAnswers = [
-                "みぞう",          // Q1 未曾有の読み方
-                "どちらも大差がない", // Q2 五十歩百歩の意味
-                "形容詞",         // Q3 「美しい」の品詞
-                "かぐや姫",        // Q4 竹取物語の主人公
-                "松尾芭蕉"         // Q5 俳句「古池や」の作者
-            ];
+   function checkAnswers() {
+    const correctAnswers = [
+        ["5", "あ"],           
+        ["ちょうおんそく", "あ"], 
+        ["重力","あ"],                    
+        ["20世紀", "２０世紀", "あ"],       
+        ["アウエイ", "ア ウ エ イ", "あ"]          
+    ];
+       //問題が簡単すぎる
 
             // ユーザーの入力値を取得
             const userAnswers = Array.from(document.querySelectorAll(".user-answer")).map(input => input.value.trim());
@@ -32,6 +91,7 @@
             if (score >= 60) {
                 document.cookie = "yuki=True; path=/";
                 document.getElementById("result").textContent = `合格！スコア: ${score}%`;
+                document.querySelector(".result-buttons").style.display = "block";
             } else {
                 document.getElementById("result").textContent = `不合格。スコア: ${score}%`;
             }
@@ -39,16 +99,21 @@
     </script>
 </head>
 <body>
+    <h1>クイズ</h1>
     <form id="quiz-form">
         <ol>
-            <li>未曾有の読み方: <input class="user-answer" type="text"></li>
-            <li>五十歩百歩の意味(どちらも大差がない): <input class="user-answer" type="text"></li>
-            <li>「美しい」の品詞: <input class="user-answer" type="text"></li>
-            <li>竹取物語の主人公: <input class="user-answer" type="text"></li>
-            <li>俳句「古池や」の作者: <input class="user-answer" type="text"></li>
+            <li>-5の絶対値は？<input class="user-answer" type="text"></li>
+            <li>「超音速」の読み方は？<input class="user-answer" type="text"></li>
+            <li>地球が中心に向かって物体を引く力を何というか。<input class="user-answer" type="text"></li>
+            <li>2024年は何世紀？<input class="user-answer" type="text"></li>
+            <li>ア is/イ friend?/ウ he/エ your 彼はあなたの友達ですか？となるように並び替えて“記号で”答えなさい<input class="user-answer" type="text"></li>
         </ol>
         <button type="button" onclick="checkAnswers()">採点する</button>
     </form>
     <p id="result"></p>
+    <div class="result-buttons">
+        <button onclick="window.location.href=window.location.href.replace('/genesis', '')">ホーム画面へ</button>
+        <button onclick="window.location.href=window.location.href.replace('/genesis', '/bbs')">掲示板へ</button>
+    </div>
 </body>
 </html>
